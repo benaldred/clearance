@@ -49,12 +49,12 @@ module Clearance
       # :password must be present, confirmed
       def self.included(model)
         model.class_eval do
-          validates_presence_of     :email, :unless => :email_optional?
+          validates_presence_of     :email, :if => :email_required?
           validates_uniqueness_of   :email, :case_sensitive => false, :allow_blank => true
           validates_format_of       :email, :with => %r{.+@.+\..+}, :allow_blank => true
 
-          validates_presence_of     :password, :unless => :password_optional?
-          validates_confirmation_of :password, :unless => :password_optional?
+          validates_presence_of     :password, :if => :password_required?
+          validates_confirmation_of :password, :if => :password_required?
         end
       end
     end
@@ -99,7 +99,7 @@ module Clearance
       #   user.reset_remember_token!
       def reset_remember_token!
         generate_remember_token
-        save(false)
+        Clearance.configuration.orm == :mongo_mapper ? save(:validate => false) : save(false)
       end
 
       # Confirm my email.
@@ -109,7 +109,7 @@ module Clearance
       def confirm_email!
         self.email_confirmed    = true
         self.confirmation_token = nil
-        save(false)
+        Clearance.configuration.orm == :mongo_mapper ? save(:validate => false) : save(false)
       end
 
       # Mark my account as forgotten password.
@@ -118,7 +118,7 @@ module Clearance
       #   user.forgot_password!
       def forgot_password!
         generate_confirmation_token
-        save(false)
+        Clearance.configuration.orm == :mongo_mapper ? save(:validate => false) : save(false)
       end
 
       # Update my password.
@@ -171,6 +171,11 @@ module Clearance
       def email_optional?
         false
       end
+      
+      # Always true. Added because the mongo mapper validations cannot handle :unless option yet!
+      def email_required?
+        true
+      end
 
       # True if the password has been set and the password is not being
       # updated. Override to allow other forms of # authentication (username,
@@ -193,12 +198,15 @@ module Clearance
     module ClassMethods
       # Authenticate with email and password.
       #
-      # @param [String, String] email and password
+      # @param [String, String] (email or username) and password
       # @return [User, nil] authenticated user or nil
       # @example
       #   User.authenticate("email@example.com", "password")
-      def authenticate(email, password)
-        return nil  unless user = find_by_email(email)
+      def authenticate(login, password)
+        user = find_by_username(login)
+        unless user
+          return nil  unless user = find_by_email(login)
+        end
         return user if     user.authenticated?(password)
       end
     end
