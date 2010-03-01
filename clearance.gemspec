@@ -4,7 +4,7 @@
 # -*- encoding: utf-8 -*-
 
 Gem::Specification.new do |s|
-  s.name = %q{clearance}
+  s.name = %q{benaldred-clearance}
   s.version = "0.8.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
@@ -98,9 +98,9 @@ Gem::Specification.new do |s|
      "test/rails_root/config/initializers/requires.rb",
      "test/rails_root/config/initializers/time_formats.rb",
      "test/rails_root/config/routes.rb",
-     "test/rails_root/db/migrate/20100225210436_clearance_create_users.rb",
+     #"test/rails_root/db/migrate/20100225210436_clearance_create_users.rb",
      "test/rails_root/features/step_definitions/clearance_steps.rb",
-     "test/rails_root/features/step_definitions/factory_girl_steps.rb",
+     #"test/rails_root/features/step_definitions/factory_girl_steps.rb",
      "test/rails_root/features/step_definitions/web_steps.rb",
      "test/rails_root/features/support/env.rb",
      "test/rails_root/features/support/paths.rb",
