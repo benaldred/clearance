@@ -1,9 +1,10 @@
 module Clearance
   class Configuration
-    attr_accessor :mailer_sender
+    attr_accessor :mailer_sender, :orm
 
     def initialize
       @mailer_sender = 'donotreply@example.com'
+      @orm = :active_record
     end
   end
 
